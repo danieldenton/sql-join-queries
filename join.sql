@@ -135,6 +135,8 @@ FROM (SELECT total_amt_usd
 ORDER BY total_amt_usd DESC
 LIMIT 2;
 
+-- GROUP BY 
+
 -- 1. Which account (by name) placed the earliest order? Your solution should have the account name and the date of the order.
 SELECT a.name, o.occurred_at
 FROM accounts a
@@ -186,3 +188,59 @@ JOIN sales_reps sr
 ON r.id = sr.region_id
 GROUP BY r.name;
 ORDER BY COUNT(sr*)
+
+-- GROUP BY 2
+
+-- 1. For each account, determine the average amount of each type of paper they purchased across their orders. Your result should have four columns - one for the account name and one for the average quantity purchased for each of the paper types for each account.
+SELECT a.name, AVG(o.standard_qty) AS standard, AVG(o.gloss_qty) AS gloss, AVG(o.poster_qty) AS poster
+FROM accounts a
+JOIN orders o
+ON a.id = o.account_id
+GROUP BY a.name
+
+-- 2. For each account, determine the average amount spent per order on each paper type. Your result should have four columns - one for the account name and one for the average amount spent on each paper type.
+SELECT a.name, AVG(o.standard_amt_usd) AS standard, AVG(o.gloss_amt_usd) AS gloss, AVG(o.poster_amt_usd) AS poster
+FROM accounts a
+JOIN orders o
+ON a.id = o.account_id
+GROUP BY a.name
+
+-- 3. Determine the number of times a particular channel was used in the web_events table for each sales rep. Your final table should have three columns - the name of the sales rep, the channel, and the number of occurrences. Order your table with the highest number of occurrences first.
+SELECT we.channel, COUNT(*), sr.name
+FROM sales_reps sr
+JOIN accounts a
+ON a.sales_rep_id = sr.id
+JOIN web_events we
+ON a.id = we.account_id
+GROUP BY we.channel, sr.name
+ORDER BY COUNT(*) DESC
+
+-- 4. Determine the number of times a particular channel was used in the web_events table for each region. Your final table should have three columns - the region name, the channel, and the number of occurrences. Order your table with the highest number of occurrences first.
+SELECT we.channel, COUNT(*), r.name
+FROM region r
+JOIN sales_reps sr
+ON r.id = sr.region_id
+JOIN accounts a
+ON a.sales_rep_id = sr.id
+JOIN web_events we
+ON a.id = we.account_id
+GROUP BY we.channel, r.name
+ORDER BY COUNT(*) DESC
+
+-- HAVING
+-- in the following queries COUNT(*) is the count of whatever is in the FROM
+SELECT COUNT(*), sr.id, sr.name
+FROM accounts a
+JOIN sales_reps sr
+ON sr.id = a.sales_rep_id
+GROUP BY sr.id, sr.name
+HAVING COUNT(*) > 5
+ORDER BY COUNT(*) DESC
+
+SELECT COUNT(*), a.name
+FROM orders o
+JOIN accounts a
+ON a.id = o.account_id
+GROUP BY a.name
+HAVING COUNT(*) > 20
+ORDER BY COUNT(*) DESC
