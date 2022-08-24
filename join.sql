@@ -88,3 +88,20 @@ JOIN orders o
 ON o.account_id = a.id
 WHERE o.occurred_at BETWEEN '01-01-2015' AND '01-01-2016'
 
+
+
+-- COUNT SUM NULL ETC
+SELECT SUM(poster_qty) AS poster
+FROM orders;
+
+SELECT SUM(standard_qty) 
+FROM orders;
+
+SELECT SUM(total_amt_usd)
+FROM orders;
+
+SELECT standard_amt_usd + gloss_amt_usd AS total_standard_gloss
+FROM orders;
+
+SELECT SUM(standard_amt_usd)/SUM(standard_qty) AS total_standard_gloss
+FROM orders;
